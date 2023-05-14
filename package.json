@@ -1,0 +1,26 @@
+{
+  "name": "hb-portal-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emmadenney/hb-portal-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emmadenney/hb-portal-test/issues"
+  },
+  "homepage": "https://github.com/emmadenney/hb-portal-test#readme",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  },
+  "dependencies": {
+    "csv-parse": "^5.3.10",
+    "csv-stringify": "^6.4.0"
+  }
+}

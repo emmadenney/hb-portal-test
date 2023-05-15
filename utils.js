@@ -123,7 +123,7 @@ function updateProducts(products) {
   // const sortedByShelf = sortProducts(sortedByBay);
 
   // convert ASCII codes back to letters
-  const updatedProducts = sortedByShelf.map((product) => {
+  const updatedProducts = sortedByBay.map((product) => {
     product.pick_location[0] = product.pick_location[0].map((letter) => {
       return String.fromCharCode(letter);
     });

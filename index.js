@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { parse } = require("csv-parse");
 const { stringify } = require("csv-stringify");
-const sortData = require("./utils");
+const updateProducts = require("./utils");
 
 fs.createReadStream("./hb_test.csv").pipe(
   parse({ columns: true }, function (err, data) {
@@ -9,8 +9,8 @@ fs.createReadStream("./hb_test.csv").pipe(
       console.log(err);
       return;
     }
-    const sortedData = sortData(data);
-    stringify(sortedData, { header: true }, function (err, output) {
+    const updatedData = updateProducts(data);
+    stringify(updatedData, { header: true }, function (err, output) {
       if (err) {
         console.log(err);
         return;
@@ -25,3 +25,5 @@ fs.createReadStream("./hb_test.csv").pipe(
     });
   })
 );
+
+module.exports = updateProducts;

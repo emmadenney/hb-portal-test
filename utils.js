@@ -23,115 +23,48 @@ function mergeProducts(products) {
   });
 }
 
-function sortProducts(unsortedProducts) {
-  // calc mid index of array
-  const mid =
-    unsortedProducts.length % 2 === 0
-      ? unsortedProducts.length / 2
-      : (unsortedProducts.length - 1) / 2;
+function sortProducts(products) {
+  // split pick location string into bay and shelf
+  const convertedProducts = products.map((product) => {
+    product.pick_location = product.pick_location.split(" ");
+    return product;
+  });
 
-  const sortedProducts = [unsortedProducts[mid]];
-  let newMid = 0;
+  convertedProducts.sort((a, b) => {
+    const bayA = a.pick_location[0];
+    const bayB = b.pick_location[0];
+    const shelfA = a.pick_location[1];
+    const shelfB = b.pick_location[1];
 
-  // sort left half
-  for (let i = 0; i < mid; i++) {
-    const bay = unsortedProducts[i].pick_location[0];
-    if (bay.length === 1) {
-      if (bay[0] > unsortedProducts[mid].pick_location[0]) {
-        sortedProducts.push(unsortedProducts[i]);
-      } else {
-        sortedProducts.unshift(unsortedProducts[i]);
-        newMid++;
-      }
-    } else {
-      if (bay[1] > unsortedProducts[mid].pick_location[0][1]) {
-        sortedProducts.push(unsortedProducts[i]);
-      } else {
-        sortedProducts.unshift(unsortedProducts[i]);
-        newMid++;
-      }
+    // if bays are the same, sort by shelf
+    if (bayA === bayB) return shelfA - shelfB;
+
+    // else if bays are not the same length, sort by bay length
+    if (bayA.length !== bayB.length) {
+      return bayA.length - bayB.length;
     }
-  }
 
-  // sort right half
-  for (let i = mid + 1; i < unsortedProducts.length; i++) {
-    const bay = unsortedProducts[i].pick_location[0];
-    if (bay.length > 1) {
-      if (bay[0] > unsortedProducts[mid].pick_location[0]) {
-        sortedProducts.push(unsortedProducts[i]);
-      } else {
-        sortedProducts.unshift(unsortedProducts[i]);
-        newMid++;
-      }
-    } else {
-      if (bay[1] > unsortedProducts[mid].pick_location[0][1]) {
-        sortedProducts.push(unsortedProducts[i]);
-      } else {
-        sortedProducts.unshift(unsortedProducts[i]);
-        newMid++;
-      }
+    // else if bays are single char || if bays are double but the first char is not the same, sort by first char
+    // localeCompare is used as it ensures correct alphabetical ordering regardless of unicode values
+    if (bayA.length === 1 || bayA[0] !== bayB[0]) {
+      return bayA[0].localeCompare(bayB[0]);
+      // else sort by second bay char
+    } else if (bayA[1] !== bayB[1]) {
+      return bayA[1].localeCompare(bayB[1]);
     }
-  }
+  });
 
-  if (unsortedProducts.length > 2) {
-    return [
-      ...sortProducts(sortedProducts.slice(0, newMid)),
-      ...sortProducts(sortedProducts.slice(newMid)),
-    ];
-  }
-
+  // join bay and shelf elements back into a string
+  const sortedProducts = convertedProducts.map((product) => {
+    product.pick_location = product.pick_location.join(" ");
+    return product;
+  });
   return sortedProducts;
 }
 
 function updateProducts(products) {
   const mergedProducts = mergeProducts(products);
-
-  // split pick locations into bay and shelves and convert bay letters to ASCII
-  const convertedLocations = mergedProducts.map((product) => {
-    product.pick_location = product.pick_location.split(" ");
-    product.pick_location[0] = product.pick_location[0]
-      .split("")
-      .map((letter) => {
-        return letter.charCodeAt();
-      });
-    return product;
-  });
-
-  // sort into bays A - Z and bays AA = AZ
-  const singleLetterBays = [];
-  const doubleLetterBays = [];
-
-  for (let i = 0; i < convertedLocations.length; i++) {
-    if (convertedLocations[i].pick_location[0].length === 1) {
-      singleLetterBays.push(convertedLocations[i]);
-    } else {
-      doubleLetterBays.push(convertedLocations[i]);
-    }
-  }
-
-  const sortedByBay = [];
-
-  if (singleLetterBays.length > 0) {
-    sortedByBay.push(...sortProducts(singleLetterBays));
-  }
-
-  if (doubleLetterBays.length > 0) {
-    sortedByBay.push(...sortProducts(doubleLetterBays));
-  }
-
-  // sort shelf numbers here
-  // const sortedByShelf = sortProducts(sortedByBay);
-
-  // convert ASCII codes back to letters
-  const updatedProducts = sortedByBay.map((product) => {
-    product.pick_location[0] = product.pick_location[0].map((letter) => {
-      return String.fromCharCode(letter);
-    });
-    product.pick_location[0] = product.pick_location[0].join("");
-    product.pick_location = product.pick_location.join(" ");
-    return product;
-  });
-
+  const updatedProducts = sortProducts(mergedProducts);
   return updatedProducts;
 }
 

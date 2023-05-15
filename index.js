@@ -1,9 +1,17 @@
 const fs = require("fs");
 const { parse } = require("csv-parse");
 const { stringify } = require("csv-stringify");
+const process = require("process");
 const updateProducts = require("./utils");
 
-fs.createReadStream("./hb_test.csv").pipe(
+if (process.argv.length !== 3) {
+  console.log("One input filepath required");
+  return;
+}
+
+const filepath = process.argv[2];
+
+fs.createReadStream(filepath).pipe(
   parse({ columns: true }, function (err, data) {
     if (err) {
       console.log(err);
@@ -25,5 +33,3 @@ fs.createReadStream("./hb_test.csv").pipe(
     });
   })
 );
-
-module.exports = updateProducts;

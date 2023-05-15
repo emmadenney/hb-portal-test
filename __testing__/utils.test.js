@@ -85,7 +85,6 @@ describe("updateProducts", () => {
     const input = [
       { product_code: "88958", quantity: "4", pick_location: "AZ 10" },
       { product_code: "11224", quantity: "8", pick_location: "AZ 4" },
-
       { product_code: "15178", quantity: "9", pick_location: "D 4" },
       { product_code: "25636", quantity: "4", pick_location: "D 2" },
     ];
